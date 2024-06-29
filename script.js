@@ -93,6 +93,7 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+    containerWorkouts.addEventListener('click', this._deleteWorkout.bind(this));
 
     // Attach event listener to delete all workouts button
     document
@@ -223,6 +224,30 @@ class App {
     }
   }
 
+  _deleteWorkout(e) {
+    if (!e.target.closest('.workout__delete')) return;
+
+    const workoutEl = e.target.closest('.workout');
+    const workoutId = workoutEl.dataset.id;
+
+    // Find the index of the workout to be deleted
+    const workoutIndex = this.#workouts.findIndex(
+      work => work.id === workoutId
+    );
+
+    // Remove workout from the workouts array
+    this.#workouts.splice(workoutIndex, 1);
+
+    // Remove workout from the DOM
+    workoutEl.remove();
+
+    // Update local storage
+    this._setLocalStorage();
+
+    // Reload the page to refresh the map
+    location.reload();
+  }
+
   _renderWorkoutMarker(workout) {
     L.marker(workout.coords)
       .addTo(this.#map)
@@ -257,9 +282,6 @@ class App {
             <span class="workout__value">${workout.duration}</span>
             <span class="workout__unit">min</span>
           </div>
-          <button class="workout__edit">
-            <i class="fas fa-pencil-alt"></i>
-          </button>
           <button class="workout__delete">
             <i class="fas fa-trash-alt"></i>
           </button>
