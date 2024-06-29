@@ -93,6 +93,11 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+
+    // Attach event listener to delete all workouts button
+    document
+      .querySelector('.btn--delete-all')
+      .addEventListener('click', this.reset.bind(this));
   }
 
   _getPosition() {
@@ -211,6 +216,11 @@ class App {
 
     // Set local storage to all workouts
     this._setLocalStorage();
+
+    // Show delete button if there are workouts
+    if (this.#workouts.length > 0) {
+      document.querySelector('.btn--delete-all').classList.remove('hidden');
+    }
   }
 
   _renderWorkoutMarker(workout) {
@@ -317,6 +327,11 @@ class App {
     this.#workouts.forEach(work => {
       this._renderWorkout(work);
     });
+
+    // Show delete button if there are workouts
+    if (this.#workouts.length > 0) {
+      document.querySelector('.btn--delete-all').classList.remove('hidden');
+    }
   }
 
   // to clear all data from local storage call app.reset() from console
