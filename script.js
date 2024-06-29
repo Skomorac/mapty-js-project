@@ -257,7 +257,12 @@ class App {
             <span class="workout__value">${workout.duration}</span>
             <span class="workout__unit">min</span>
           </div>
-          
+          <button class="workout__edit">
+            <i class="fas fa-pencil-alt"></i>
+          </button>
+          <button class="workout__delete">
+            <i class="fas fa-trash-alt"></i>
+          </button>
     `;
 
     if (workout.type === 'running')
