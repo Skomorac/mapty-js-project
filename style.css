@@ -259,3 +259,33 @@ a:visited {
 .workout__delete:hover {
   color: var(--color-brand--1);
 }
+
+.custom-swal-popup {
+  background-color: var(--color-dark--1);
+  color: var(--color-light--2);
+  border-radius: 5px;
+  padding: 1rem;
+}
+
+.custom-swal-title {
+  font-size: 2rem;
+  color: var(--color-brand--1);
+}
+
+.custom-swal-content {
+  font-size: 1.4rem;
+  color: var(--color-light--2);
+}
+
+.custom-swal-button {
+  background-color: var(--color-brand--1);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.custom-swal-button:hover {
+  background-color: var(--color-brand--2);
+}

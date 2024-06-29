@@ -159,66 +159,72 @@ class App {
   }
 
   _newWorkout(e) {
-    // helper func for validating input values
     const validInputs = (...inputs) =>
       inputs.every(inp => Number.isFinite(inp));
-
     const allPositive = (...inputs) => inputs.every(inp => inp > 0);
 
     e.preventDefault();
 
-    // Get data from form
     const type = inputType.value;
     const distance = +inputDistance.value;
     const duration = +inputDuration.value;
     const { lat, lng } = this.#mapEvent.latlng;
     let workout;
 
-    // If workout is running, create running object
     if (type === 'running') {
       const cadence = +inputCadence.value;
-      // Check if data is valid
       if (
-        // !Number.isFinite(distance) ||
-        // !Number.isFinite(duration) ||
-        // !Number.isFinite(cadence)
         !validInputs(distance, duration, cadence) ||
         !allPositive(distance, duration, cadence)
-      )
-        return alert('Inputs have to be positive numbers!');
-
+      ) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Inputs have to be positive numbers!',
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            content: 'custom-swal-content',
+            confirmButton: 'custom-swal-button',
+          },
+        });
+        return;
+      }
       workout = new Running([lat, lng], distance, duration, cadence);
     }
 
-    // If workout is cycling, create cycling object
     if (type === 'cycling') {
       const elevation = +inputElevation.value;
       if (
         !validInputs(distance, duration, elevation) ||
         !allPositive(distance, duration)
-      )
-        return alert('Inputs have to be positive numbers!');
-
+      ) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: 'Inputs have to be positive numbers!',
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            content: 'custom-swal-content',
+            confirmButton: 'custom-swal-button',
+          },
+        });
+        return;
+      }
       workout = new Cycling([lat, lng], distance, duration, elevation);
     }
 
-    // Add new object to workout array
     this.#workouts.push(workout);
     console.log(workout);
 
-    // Render workout on map as marker
     this._renderWorkoutMarker(workout);
-
-    // render workout on list
     this._renderWorkout(workout);
 
-    // Hide form and clear input fields
     this._hideForm();
 
-    // Set local storage to all workouts
     this._setLocalStorage();
 
-    // Show delete button if there are workouts
     if (this.#workouts.length > 0) {
       document.querySelector('.btn--delete-all').classList.remove('hidden');
     }
@@ -230,22 +236,45 @@ class App {
     const workoutEl = e.target.closest('.workout');
     const workoutId = workoutEl.dataset.id;
 
-    // Find the index of the workout to be deleted
-    const workoutIndex = this.#workouts.findIndex(
-      work => work.id === workoutId
-    );
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--color-brand--2)',
+      cancelButtonColor: 'var(--color-brand--1)',
+      confirmButtonText: 'Yes, delete it!',
+      customClass: {
+        popup: 'custom-swal-popup',
+        title: 'custom-swal-title',
+        content: 'custom-swal-content',
+        confirmButton: 'custom-swal-button',
+        cancelButton: 'custom-swal-button',
+      },
+    }).then(result => {
+      if (result.isConfirmed) {
+        const workoutIndex = this.#workouts.findIndex(
+          work => work.id === workoutId
+        );
 
-    // Remove workout from the workouts array
-    this.#workouts.splice(workoutIndex, 1);
+        this.#workouts.splice(workoutIndex, 1);
 
-    // Remove workout from the DOM
-    workoutEl.remove();
+        workoutEl.remove();
 
-    // Update local storage
-    this._setLocalStorage();
+        this._setLocalStorage();
 
-    // Reload the page to refresh the map
-    location.reload();
+        location.reload();
+
+        Swal.fire('Deleted!', 'Your workout has been deleted.', 'success', {
+          customClass: {
+            popup: 'custom-swal-popup',
+            title: 'custom-swal-title',
+            content: 'custom-swal-content',
+            confirmButton: 'custom-swal-button',
+          },
+        });
+      }
+    });
   }
 
   _renderWorkoutMarker(workout) {
@@ -363,8 +392,40 @@ class App {
 
   // to clear all data from local storage call app.reset() from console
   reset() {
-    localStorage.removeItem('workouts');
-    location.reload();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: 'All your workouts will be deleted!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: 'var(--color-brand--2)',
+      cancelButtonColor: 'var(--color-brand--1)',
+      confirmButtonText: 'Yes, delete all!',
+      customClass: {
+        popup: 'custom-swal-popup',
+        title: 'custom-swal-title',
+        content: 'custom-swal-content',
+        confirmButton: 'custom-swal-button',
+        cancelButton: 'custom-swal-button',
+      },
+    }).then(result => {
+      if (result.isConfirmed) {
+        localStorage.removeItem('workouts');
+        location.reload();
+        Swal.fire(
+          'Deleted!',
+          'All your workouts have been deleted.',
+          'success',
+          {
+            customClass: {
+              popup: 'custom-swal-popup',
+              title: 'custom-swal-title',
+              content: 'custom-swal-content',
+              confirmButton: 'custom-swal-button',
+            },
+          }
+        );
+      }
+    });
   }
 }
 
